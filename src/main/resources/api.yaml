@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: Example API
+  description: TODO
+  version: 1.0.0
+servers:
+   - url: http://localhost:8081/api
+     description: Local server
+#  - url: http://localhost:8081 TODO kbannach /api didn't work in previous openapi generator version, to verify
+#     description: Local server
+
+paths:
+  /meteorogram/image:
+    get:
+      description: Returns a Meteorogram image bytes by city
+      operationId: getMeteorogramImage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetMeteorogramImageRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: When no Meteorogram found for given parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorType'
+  /scrap:
+    post:
+      description: Initiates Meteorograms scaping
+      operationId: scrap
+      responses:
+        '200':
+          description: Scraping completed succesfully
+
+components:
+  schemas:
+    GetMeteorogramImageRequest:
+      type: object
+      required:
+        - city
+      properties:
+        dateTime:
+          description: First Meteorogram found after given date will be returned
+          type: string
+          format: date-time
+          example: '2020-06-14T00:45:50.1974593'
+        city:
+          description: Which city's Meteorogram to find?
+          type: string
+          enum: [ GDYNIA, GDANSK ]
+    ErrorType:
+      type: object
+      properties:
+        errorType:
+          type: string
+          enum: [ ENTITY_NOT_FOUND ]
+        message:
+          type: string
