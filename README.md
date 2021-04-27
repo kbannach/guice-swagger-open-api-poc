@@ -1,0 +1,1 @@
+# guice-swagger-open-api-poc
